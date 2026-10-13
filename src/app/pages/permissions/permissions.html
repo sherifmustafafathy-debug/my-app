@@ -1,0 +1,24 @@
+<section class="page-heading">
+  <div><p class="eyebrow">{{ locale.text('management') }}</p><h1>{{ locale.text('permissions') }}</h1><p class="subheading">{{ locale.text('permissionIntro') }}</p></div>
+  @if (canCreate()) {<button class="button button-primary" type="button" (click)="open()"><span class="button-icon">+</span>{{ locale.text('newRole') }}</button>}
+</section>
+<section class="panel table-panel">
+  <div class="panel-header"><div><h2 class="panel-title">{{ locale.text('permissions') }}</h2><div class="panel-subtitle">{{ store.roles().length }} {{ locale.text('role') }}</div></div></div>
+  <div class="table-wrap"><table><thead><tr><th>{{ locale.text('roleName') }}</th><th>{{ locale.text('description') }}</th><th>{{ locale.text('permissionsLabel') }}</th><th>{{ locale.text('actions') }}</th></tr></thead>
+    <tbody>@for (role of store.roles(); track role.id) {<tr><td><strong>{{ role.name }}</strong></td><td>{{ role.description }}</td><td><span class="permission-count">{{ store.permissionModuleCount(role) }} {{ locale.text('modules') }}</span></td><td class="row-actions">@if (canEdit()) {<button class="button button-quiet" type="button" (click)="open(role)">{{ locale.text('edit') }}</button>} @if (canDelete()) {<button class="button button-danger-quiet" type="button" (click)="remove(role)">{{ locale.text('delete') }}</button>}</td></tr>}</tbody>
+  </table></div>
+</section>
+@if (formOpen()) {
+  <div class="modal-backdrop" (click)="formOpen.set(false)">
+    <section class="modal permission-modal" role="dialog" aria-modal="true" aria-labelledby="roleFormTitle" (click)="$event.stopPropagation()">
+      <header class="modal-heading"><div><p class="eyebrow">{{ locale.text('management') }}</p><h2 id="roleFormTitle">{{ locale.text(editingId ? 'editRole' : 'newRole') }}</h2></div><button class="icon-button" type="button" (click)="formOpen.set(false)" aria-label="Close">×</button></header>
+      <form class="modal-body" (ngSubmit)="save()">
+        <div class="form-field"><label for="roleName">{{ locale.text('roleName') }}</label><input id="roleName" name="roleName" [(ngModel)]="draft.name" required /></div>
+        <div class="form-field"><label for="roleDescription">{{ locale.text('roleDescription') }}</label><input id="roleDescription" name="roleDescription" [(ngModel)]="draft.description" /></div>
+        <fieldset class="permission-fieldset"><legend>{{ locale.text('modules') }}</legend><div class="permission-table-wrap"><table class="permission-table"><thead><tr><th>{{ locale.text('moduleName') }}</th>@for (action of actions; track action) {<th>{{ locale.text(action + 'Access') }}</th>}</tr></thead><tbody>@for (module of modules; track module.key) {<tr><th scope="row">{{ moduleLabel(module) }}</th>@for (action of actions; track action) {<td><input type="checkbox" [attr.aria-label]="moduleLabel(module) + ' ' + locale.text(action + 'Access')" [checked]="permissionChecked(module.key, action)" (change)="togglePermission(module.key, action, $any($event.target).checked)" /></td>}</tr>}</tbody></table></div></fieldset>
+        @if (errorKey()) {<p class="form-error" role="alert">{{ locale.text(errorKey()) }}</p>}
+        <div class="modal-actions"><button type="button" class="button button-quiet" (click)="formOpen.set(false)">{{ locale.text('cancel') }}</button><button type="submit" class="button button-primary">{{ locale.text('saveRole') }}</button></div>
+      </form>
+    </section>
+  </div>
+}

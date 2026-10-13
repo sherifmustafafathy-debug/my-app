@@ -1,0 +1,10 @@
+<main class="login-page" [attr.dir]="locale.language() === 'ar' ? 'rtl' : 'ltr'">
+  <section class="login-panel">
+    <header class="login-header"><a class="brand" routerLink="/"><span class="brand-mark">+</span><span><strong>{{ locale.text('brand') }}</strong><small>{{ locale.text('workspace') }}</small></span></a><button class="language-button" type="button" (click)="locale.toggle()">{{ locale.language() === 'en' ? 'العربية' : 'English' }}</button></header>
+    <div class="login-copy"><p class="eyebrow">{{ locale.text('workspace') }}</p><h1>{{ locale.text('loginTitle') }}</h1><p class="subheading">{{ locale.text('loginSubtitle') }}</p></div>
+    <form class="login-form" (ngSubmit)="submit()"><div class="form-field"><label for="loginEmail">{{ locale.text('email') }}</label><input id="loginEmail" name="email" type="email" autocomplete="username" [(ngModel)]="email" required /></div><div class="form-field"><label for="loginPassword">{{ locale.text('password') }}</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" [(ngModel)]="password" required /></div>@if (error()) {<p class="login-error" role="alert">{{ locale.text('invalidCredentials') }}</p>}<button class="button button-primary login-submit" type="submit" [disabled]="pending()">{{ locale.text(pending() ? 'checkingLogin' : 'login') }}</button></form>
+    <aside class="demo-credentials"><strong>{{ locale.text('demoCredentials') }}</strong><span>{{ auth.demoEmail }}</span><span>{{ auth.demoPassword }}</span></aside>
+    <p class="login-note">{{ locale.text('localAuthNote') }}</p>
+  </section>
+  <div class="login-side"><div class="side-mark">+</div><p>{{ locale.text('branch') }}</p><span>CAIRO · EGYPT</span></div>
+</main>

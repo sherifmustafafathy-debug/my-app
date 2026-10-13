@@ -1,0 +1,24 @@
+@if (auth.currentUser()) {
+<div class="app-shell" [attr.dir]="locale.language() === 'ar' ? 'rtl' : 'ltr'" [class.nav-pinned]="sidebarPinned()" [class.mobile-menu-open]="menuOpen()">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/" (click)="closeMenu()"><span class="brand-mark">+</span><span><strong>{{ locale.text('brand') }}</strong><small>{{ locale.text('workspace') }}</small></span></a>
+    <div class="branch-switcher"><span class="branch-dot"></span><span><small>{{ locale.text('branchField') }}</small><strong>{{ locale.text('branch') }}</strong></span><span class="chevron">⌄</span></div>
+    <nav class="primary-nav" aria-label="Main navigation">
+      @for (group of visibleGroups(); track group.label) {
+        <div class="nav-heading">{{ locale.text(group.label) }}</div>
+        @for (item of group.items; track item.route + item.label) {
+          <a class="nav-item" [routerLink]="[item.route]" [queryParams]="item.query" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }" (click)="closeMenu()"><span class="nav-icon">{{ item.icon }}</span><span>{{ locale.text(item.label) }}</span></a>
+        }
+      }
+    </nav>
+    <div class="sidebar-bottom"><a class="nav-item" routerLink="/records/masterData" (click)="closeMenu()"><span class="nav-icon">?</span><span>{{ locale.text('help') }}</span></a><div class="profile"><span class="avatar">{{ auth.currentUser()?.name?.slice(0, 2) }}</span><span class="profile-copy"><strong>{{ auth.currentUser()?.name }}</strong><small>{{ auth.currentUser()?.role }}</small></span><button class="more-button sign-out-button" type="button" [attr.aria-label]="locale.text('signOut')" [title]="locale.text('signOut')" (click)="signOut()">↪</button></div></div>
+  </aside>
+  @if (menuOpen()) { <button class="mobile-overlay" type="button" aria-label="Close menu" (click)="closeMenu()"></button> }
+  <main class="main-area">
+    <header class="topbar"><button class="icon-button menu-button" type="button" [attr.aria-label]="navigationTitle" [attr.title]="navigationTitle" [attr.aria-expanded]="menuOpen() || sidebarPinned()" (click)="toggleNavigation()">☰</button><div class="breadcrumb"><span>{{ locale.text('dashboardLink') }}</span><span class="crumb-separator">/</span><strong>{{ locale.text('branch') }}</strong></div><div class="topbar-actions"><label class="search-box"><span class="search-symbol">⌕</span><input type="search" [placeholder]="locale.text('search')" /></label><button class="language-button" type="button" (click)="locale.toggle()">{{ locale.language() === 'en' ? 'العربية' : 'English' }}</button><span class="notification-mark" aria-label="Notifications">♧<i></i></span></div></header>
+    <section class="page-content"><router-outlet /></section>
+  </main>
+</div>
+} @else {
+  <router-outlet />
+}
